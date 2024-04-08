@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<body>
+<?php
+$owoce = ["jablko", "banan", "pomarancza"];
+
+
+foreach ($owoce as &$owocki) {
+    $odwrocony = strrev($owocki); 
+    echo $odwrocony . '<br />';
+    
+    if (strtolower($owocki[0]) === 'p') {
+        echo "Owoc zaczyna się literą 'p'<br />";
+    } else {
+        echo "Owoc nie zaczyna się literą 'p'<br />";
+    }
+}
+
+?>
+
+</body>
+</html>	
