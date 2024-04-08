@@ -1,3 +1,4 @@
+Zad1
 <!DOCTYPE html>
 <html>
 <body>
@@ -20,3 +21,105 @@ foreach ($owoce as &$owocki) {
 
 </body>
 </html>	
+
+Zad2
+<!DOCTYPE html>
+<html>
+<body>
+
+<?php
+$koniec = 1000;
+
+echo "Liczby pierwsze od $poczatek do $koniec to: ";
+
+for ($i = 1; $i <= $koniec; $i++) {
+    $czy_pierwsza = true;
+
+    if ($i <= 1) {
+        continue;
+    }
+
+    for ($j = 2; $j <= sqrt($i); $j++) {
+        if ($i % $j == 0) {
+            $czy_pierwsza = false;
+            break;
+        }
+    }
+
+    if ($czy_pierwsza) {
+        echo $i . " ";
+    }
+}
+?>
+
+</body>
+</html>
+
+Zad3
+<!DOCTYPE html>
+<html>
+<body>
+
+<?php
+$N = 22; 
+
+$fibonacci = array();
+$fibonacci[0] = 0;
+$fibonacci[1] = 1;
+
+for ($i = 2; $i <= $N; $i++) {
+    $fibonacci[$i] = $fibonacci[$i - 1] + $fibonacci[$i - 2];
+}
+
+echo "Nieparzyste  ciągu fibonacciego do $N:<br></br>";
+foreach ($fibonacci as $key => $value) {
+    if ($value % 2 != 0) {
+        echo "$key: $value . <br></br>";
+    }
+}
+?>
+</body>
+</html>
+
+Zad4
+<!DOCTYPE html>
+<html>
+<body>
+
+<?php
+$text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
+
+
+$wordsArray = explode(" ", $text);
+
+
+for ($i = 0; $i < count($wordsArray); $i++) {
+    $word = $wordsArray[$i];
+    $lastChar = substr($word, -1);
+    if (in_array($lastChar, ['.', ',','"'])) {
+        array_splice($wordsArray, $i, 1);
+        $i--; 
+    }
+}
+
+
+$associativeArray = array();
+for ($i = 0; $i < count($wordsArray) - 1; $i++) {
+    if ($i % 2 == 0) {
+       
+        $key = $wordsArray[$i];
+        
+        $value = $wordsArray[$i + 1];
+        $associativeArray[$key] = $value;
+    }
+}
+
+foreach ($associativeArray as $key => $value) {
+   echo "$key => $value<br />";
+
+}
+?>
+
+</body>
+</html>
+
