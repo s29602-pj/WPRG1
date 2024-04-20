@@ -1,1 +1,288 @@
+Zadanie1 
+<!DOCTYPE html>
+<html>
+<body>
+<h2>Kalkulator</h2>
+
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+    <label for="liczba1">Liczba 1:</label>
+    <input type="number" id="liczba1" name="liczba1" required><br><br>
+    
+    <label for="liczba2">Liczba 2:</label>
+    <input type="number" id="liczba2" name="liczba2" required><br><br>
+    
+    <label for="dzialanie">Wybierz działanie:</label>
+    <select id="dzialanie" name="dzialanie">
+        <option value="dodawanie">Dodawanie</option>
+        <option value="odejmowanie">Odejmowanie</option>
+        <option value="mnozenie">Mnożenie</option>
+        <option value="dzielenie">Dzielenie</option>
+    </select><br><br>
+    
+    <input type="submit" value="Oblicz">
+</form>
+
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $liczba1 = $_POST['liczba1'];
+    $liczba2 = $_POST['liczba2'];
+    $dzialanie = $_POST['dzialanie'];
+    
+    switch ($dzialanie) {
+        case "dodawanie":
+            $wynik = $liczba1 + $liczba2;
+            echo "Wynik dodawania: $wynik";
+            break;
+        case "odejmowanie":
+            $wynik = $liczba1 - $liczba2;
+            echo "Wynik odejmowania: $wynik";
+            break;
+        case "mnozenie":
+            $wynik = $liczba1 * $liczba2;
+            echo "Wynik mnożenia: $wynik";
+            break;
+        case "dzielenie":
+            if ($liczba2 != 0) {
+                $wynik = $liczba1 / $liczba2;
+                echo "Wynik dzielenia: $wynik";
+            } else {
+                echo "Nie można dzielić przez zero!";
+            }
+            break;
+        default:
+            echo "Nieznane działanie.";
+    }
+}
+?>
+
+</body>
+</html>
+
+
+Zadanie 2
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Formularz Rezerwacji Hotelowej</h2>
+    <form action="" method="post">
+        <label for="ilosc_osob">Ilość osób:</label>
+        <select id="ilosc_osob" name="ilosc_osob" required>
+            <option value="1">1 osoba</option>
+            <option value="2">2 osoby</option>
+            <option value="3">3 osoby</option>
+            <option value="4">4 osoby</option>
+        </select><br><br>
+
+        <label for="imie">Imię:</label>
+        <input type="text" id="imie" name="imie" required><br><br>
+
+        <label for="nazwisko">Nazwisko:</label>
+        <input type="text" id="nazwisko" name="nazwisko" required><br><br>
+
+        <label for="adres">Adres:</label>
+        <input type="text" id="adres" name="adres" required><br><br>
+
+        <label for="karta_kredytowa">Nr karty kredytowej:</label>
+        <input type="text" id="karta_kredytowa" name="karta_kredytowa" pattern="[0-9]{16}" required><br><br>
+
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="data_pobytu">Data pobytu:</label>
+        <input type="date" id="data_pobytu" name="data_pobytu" required><br><br>
+
+        <label for="godzina_przyjazdu">Godzina przyjazdu:</label>
+        <input type="time" id="godzina_przyjazdu" name="godzina_przyjazdu" required><br><br>
+
+        <label for="dostawienie_lozka">Dostawienie łóżka dla dziecka:</label>
+        <input type="checkbox" id="dostawienie_lozka" name="dostawienie_lozka"><br><br>
+
+        <label for="udogodnienia">Udogodnienia:</label><br>
+        <input type="checkbox" id="klimatyzacja" name="udogodnienia[]" value="klimatyzacja">
+        <label for="klimatyzacja">Klimatyzacja</label><br>
+        <input type="checkbox" id="popielniczka" name="udogodnienia[]" value="popielniczka">
+        <label for="popielniczka">Popielniczka dla palacza</label><br><br>
+
+        <input type="submit" value="Zarezerwuj">
+    </form>
+
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $ilosc_osob = $_POST['ilosc_osob'];
+        $imie = $_POST['imie'];
+        $nazwisko = $_POST['nazwisko'];
+        $adres = $_POST['adres'];
+        $karta_kredytowa = $_POST['karta_kredytowa'];
+        $email = $_POST['email'];
+        $data_pobytu = $_POST['data_pobytu'];
+        $godzina_przyjazdu = $_POST['godzina_przyjazdu'];
+        $dostawienie_lozka = isset($_POST['dostawienie_lozka']) ? "Tak" : "Nie";
+        $udogodnienia = isset($_POST['udogodnienia']) ? implode(", ", $_POST['udogodnienia']) : "Brak";
+
+        
+        echo "<h2>Podsumowanie Rezerwacji</h2>";
+        echo "<table>";
+        echo "<tr><th>Parametr</th><th>Wartość</th></tr>";
+        echo "<tr><td>Ilość osób</td><td>$ilosc_osob</td></tr>";
+        echo "<tr><td>Imię</td><td>$imie</td></tr>";
+        echo "<tr><td>Nazwisko</td><td>$nazwisko</td></tr>";
+        echo "<tr><td>Adres</td><td>$adres</td></tr>";
+        echo "<tr><td>Nr karty kredytowej</td><td>$karta_kredytowa</td></tr>";
+        echo "<tr><td>E-mail</td><td>$email</td></tr>";
+        echo "<tr><td>Data pobytu</td><td>$data_pobytu</td></tr>";
+        echo "<tr><td>Godzina przyjazdu</td><td>$godzina_przyjazdu</td></tr>";
+        echo "<tr><td>Dostawienie łóżka dla dziecka</td><td>$dostawienie_lozka</td></tr>";
+        echo "<tr><td>Udogodnienia</td><td>$udogodnienia</td></tr>";
+        echo "</table>";
+    }
+    ?>
+</body>
+</html>
+
+
+Zadanie 3
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <h2>Formularz Rezerwacji Hotelowej</h2>
+   
+        <label for="ilosc_osob">Ilość osób:</label>
+        <select id="ilosc_osob" name="ilosc_osob" required>
+            <option value="1">1 osoba</option>
+            <option value="2">2 osoby</option>
+            <option value="3">3 osoby</option>
+            <option value="4">4 osoby</option>
+        </select><br><br>
+
+        <fieldset>
+            <legend>Dane osoby rezerwującej</legend>
+            <label for="imie">Imię:</label>
+            <input type="text" id="imie" name="imie" required><br>
+
+            <label for="nazwisko">Nazwisko:</label>
+            <input type="text" id="nazwisko" name="nazwisko" required><br>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" required><br>
+        </fieldset>
+
+        <div id="dodatkowe_osoby">
+          
+        </div>
+
+        <label for="adres">Adres:</label>
+        <input type="text" id="adres" name="adres" required><br><br>
+
+        <label for="karta_kredytowa">Nr karty kredytowej:</label>
+        <input type="text" id="karta_kredytowa" name="karta_kredytowa" pattern="[0-9]{16}" required><br><br>
+
+        <label for="data_pobytu">Data pobytu:</label>
+        <input type="date" id="data_pobytu" name="data_pobytu" required><br><br>
+
+        <label for="godzina_przyjazdu">Godzina przyjazdu:</label>
+        <input type="time" id="godzina_przyjazdu" name="godzina_przyjazdu" required><br><br>
+
+        <label for="dostawienie_lozka">Dostawienie łóżka dla dziecka:</label>
+        <input type="checkbox" id="dostawienie_lozka" name="dostawienie_lozka"><br><br>
+
+        <label for="udogodnienia">Udogodnienia:</label><br>
+        <input type="checkbox" id="klimatyzacja" name="udogodnienia[]" value="klimatyzacja">
+        <label for="klimatyzacja">Klimatyzacja</label><br>
+        <input type="checkbox" id="popielniczka" name="udogodnienia[]" value="popielniczka">
+        <label for="popielniczka">Popielniczka dla palacza</label><br><br>
+
+        <input type="submit" value="Zarezerwuj">
+    </form>
+
+    <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $ilosc_osob = $_POST['ilosc_osob'];
+        echo "<h2>Podsumowanie Rezerwacji</h2>";
+        echo "<p>Ilość osób: $ilosc_osob</p>";
+        echo "<p>Podstawowe dane dla osoby rezerwującej:</p>";
+        $imie = $_POST["imie"];
+        $nazwisko = $_POST["nazwisko"];
+        $email = $_POST["email"];
+        echo "<p><strong>Osoba rezerwująca:</strong> Imię: $imie, Nazwisko: $nazwisko, E-mail: $email</p>";
+
+      
+        if ($ilosc_osob > 1) {
+            echo "<p>Podstawowe dane dla dodatkowych osób:</p>";
+            for ($i = 1; $i < $ilosc_osob; $i++) {
+                $imie_osoby = $_POST["imie"][$i];
+                $nazwisko_osoby = $_POST["nazwisko"][$i];
+                $email_osoby = $_POST["email"][$i];
+                echo "<p><strong>Osoba ".($i+1).":</strong> Imię: $imie_osoby, Nazwisko: $nazwisko_osoby, E-mail: $email_osoby</p>";
+            }
+        }
+
+        
+        $adres = $_POST['adres'];
+        $karta_kredytowa = $_POST['karta_kredytowa'];
+        $data_pobytu = $_POST['data_pobytu'];
+        $godzina_przyjazdu = $_POST['godzina_przyjazdu'];
+        $dostawienie_lozka = isset($_POST['dostawienie_lozka']) ? "Tak" : "Nie";
+        $udogodnienia = isset($_POST['udogodnienia']) ? implode(", ", $_POST['udogodnienia']) : "Brak";
+
+        
+        echo "<h3>Pozostałe dane rezerwacji:</h3>";
+        echo "<p>Adres: $adres</p>";
+        echo "<p>Nr karty kredytowej: $karta_kredytowa</p>";
+        echo "<p>Data pobytu: $data_pobytu</p>";
+        echo "<p>Godzina przyjazdu: $godzina_przyjazdu</p>";
+        echo "<p>Dostawienie łóżka dla dziecka: $dostawienie_lozka</p>";
+        echo "<p>Udogodnienia: $udogodnienia</p>";
+    }
+    ?>
+</body>
+</html>
+
+
+Zadanie 4
+<!DOCTYPE html>
+<html>
+<body>
+    <form action= method="post">
+        <label for="number">Podaj liczbę:</label>
+        <input type="number" id="number" name="number" required><br><br>
+        <input type="submit" value="Sprawdź">
+    </form>
+
+    <?php
+    function isPrime($number) {
+        if ($number <= 1) {
+            return false;
+        }
+        if ($number <= 3) {
+            return true;
+        }
+        if ($number % 2 == 0 || $number % 3 == 0) {
+            return false;
+        }
+        $i = 5;
+        while ($i * $i <= $number) {
+            if ($number % $i == 0 || $number % ($i + 2) == 0) {
+                return false;
+            }
+            $i += 6;
+        }
+        return true;
+    }
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $number = $_POST['number'];
+        if (!is_numeric($number) || $number <= 0 || $number != intval($number)) {
+            echo "Podana wartość nie jest dodatnią liczbą całkowitą.";
+        } else {
+            $iterations = 0;
+            $is_prime = isPrime($number);
+            echo "Czy liczba $number jest liczbą pierwszą? ";
+            echo $is_prime ? "Tak" : "Nie";
+            echo "<br>";
+            echo "Liczba wykonanych iteracji: $iterations";
+        }
+    }
+    ?>
+</body>
+</html>
 
