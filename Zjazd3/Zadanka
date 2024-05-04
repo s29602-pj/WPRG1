@@ -1,1 +1,196 @@
+Zadanie 1
+<!DOCTYPE html>
+<html>
+<body>
+    <form action="" method="GET">
+        <label for="data_urodzenia">Podaj swoją datę urodzenia:</label>
+        <input type="date" id="data_urodzenia" name="data_urodzenia">
+        <button type="submit">Wyślij</button>
+    </form>
+
+    <?php
+    if(isset($_GET['data_urodzenia'])) {
+        $data_urodzenia = $_GET['data_urodzenia'];
+
+        
+        function dzien_tygodnia($data) {
+            $dzien = date('l', strtotime($data));
+            return $dzien;
+        }
+
+        
+        function ukonczone_lata($data) {
+            $dzis = new DateTime();
+            $urodziny = new DateTime($data);
+            $roznica = $dzis->diff($urodziny);
+            return $roznica->y;
+        }
+
+        
+        function dni_do_urodzin($data) {
+            $dzis = new DateTime();
+            $urodziny = new DateTime($data);
+            $urodziny->modify('+' . $urodziny->diff($dzis)->y + 1 . ' years');
+            $roznica = $dzis->diff($urodziny);
+            return $roznica->days;
+        }
+
+        
+        $dzien_tygodnia = dzien_tygodnia($data_urodzenia);
+        $ukonczone_lata = ukonczone_lata($data_urodzenia);
+        $dni_do_urodzin = dni_do_urodzin($data_urodzenia);
+
+        echo "<br>Urodziłeś się w dniu: $dzien_tygodnia<br>";
+        echo "Masz $ukonczone_lata lata/lato<br>";
+        echo "Do Twoich najbliższych urodzin pozostało $dni_do_urodzin dni";
+    }
+    ?>
+</body>
+</html>
+
+
+Zadanie 2
+<?php
+
+function fibonacci_rekurencyjna($n) {
+    if ($n == 0) {
+        return 0;
+    } elseif ($n == 1) {
+        return 1;
+    } else {
+        return fibonacci_rekurencyjna($n - 1) + fibonacci_rekurencyjna($n - 2);
+    }
+}
+
+
+function fibonacci_nierekurencyjna($n) {
+    $fibonacci = [0, 1];
+    for ($i = 2; $i <= $n; $i++) {
+        $fibonacci[$i] = $fibonacci[$i - 1] + $fibonacci[$i - 2];
+    }
+    return $fibonacci[$n];
+}
+
+
+function pomiar_czasu($funkcja, $argument) {
+    $start = microtime(true);
+    $wynik = $funkcja($argument);
+    $koniec = microtime(true);
+    $czas = $koniec - $start;
+    return [$wynik, $czas];
+}
+
+
+$argument = isset($_GET['argument']) ? intval($_GET['argument']) : 10;
+
+
+list($fibonacci_rekurencyjna_wynik, $fibonacci_rekurencyjna_czas) = pomiar_czasu('fibonacci_rekurencyjna', $argument);
+
+
+list($fibonacci_nierekurencyjna_wynik, $fibonacci_nierekurencyjna_czas) = pomiar_czasu('fibonacci_nierekurencyjna', $argument);
+
+
+echo "<h2>Wyniki dla wyrazu Fibonacciego o numerze $argument:</h2>";
+echo "<h3>Fibonacci:</h3>";
+echo "Rekurencyjna: $fibonacci_rekurencyjna_wynik, czas wykonania: $fibonacci_rekurencyjna_czas sekund<br>";
+echo "Nierekurencyjna: $fibonacci_nierekurencyjna_wynik, czas wykonania: $fibonacci_nierekurencyjna_czas sekund<br>";
+
+
+if ($fibonacci_rekurencyjna_czas < $fibonacci_nierekurencyjna_czas) {
+    $szybsza = "rekurencyjna";
+    $roznica = $fibonacci_nierekurencyjna_czas - $fibonacci_rekurencyjna_czas;
+} else {
+    $szybsza = "nierekurencyjna";
+    $roznica = $fibonacci_rekurencyjna_czas - $fibonacci_nierekurencyjna_czas;
+}
+
+echo "<p>Funkcja $szybsza działała szybciej o $roznica sekund.</p>";
+?>
+
+
+
+Zadanie 3
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Formularz obsługi katalogów</h2>
+    <form action="post">
+        <label for="ścieżka">Ścieżka:</label>
+        <input type="text" id="ścieżka" name="ścieżka" required><br><br>
+        
+        <label for="katalog">Nazwa katalogu:</label>
+        <input type="text" id="katalog" name="katalog" required><br><br>
+        
+        <label for="operacja">Operacja:</label>
+        <select id="operacja" name="operacja">
+            <option value="read">Odczyt</option>
+            <option value="delete">Usuń</option>
+            <option value="create">Stwórz</option>
+        </select><br><br>
+        
+        <button type="submit">Wykonaj operację</button>
+    </form>
+
+    <?php
+    
+    function obsluga_katalogow($sciezka, $katalog, $operacja = "read") {
+        if (substr($sciezka, -1) != "/") {
+            $sciezka .= "/";
+        }
+
+        
+        switch ($operacja) {
+            case 'read':
+                
+                if (is_dir($sciezka.$katalog)) {
+                    $elementy = scandir($sciezka.$katalog);
+                    $elementy = array_diff($elementy, ['.', '..']);
+                    return $elementy;
+                } else {
+                    return "Katalog nie istnieje.";
+                }
+                break;
+
+            case 'delete':
+                
+                if (is_dir($sciezka.$katalog)) {
+                    if (count(scandir($sciezka.$katalog)) == 2) {
+                        
+                        rmdir($sciezka.$katalog);
+                        return "Katalog został usunięty.";
+                    } else {
+                        return "Katalog nie jest pusty.";
+                    }
+                } else {
+                    return "Katalog nie istnieje.";
+                }
+                break;
+
+            case 'create':
+                
+                if (!is_dir($sciezka.$katalog)) {
+                    mkdir($sciezka.$katalog);
+                    return "Katalog został utworzony.";
+                } else {
+                    return "Katalog już istnieje.";
+                }
+                break;
+
+            default:
+                return "Nieprawidłowa operacja.";
+                break;
+        }
+    }
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $sciezka = $_POST['ścieżka'];
+        $katalog = $_POST['katalog'];
+        $operacja = $_POST['operacja'];
+
+        $wynik = obsluga_katalogow($sciezka, $katalog, $operacja);
+        echo "<h2>Wynik operacji:</h2>";
+        echo $wynik;
+    }
+    ?>
+</body>
+</html>
 
