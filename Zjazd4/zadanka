@@ -1,0 +1,159 @@
+Zad1
+<?php
+session_start();
+
+$valid_username = 'nazwa';
+$valid_password = 'haslo';
+
+
+function set_form_cookies($data) {
+    foreach ($data as $key => $value) {
+        if (is_array($value)) {
+            foreach ($value as $i => $sub_value) {
+                setcookie("{$key}[{$i}]", $sub_value, time() + 86400, "/");
+            }
+        } else {
+            setcookie($key, $value, time() + 86400, "/");
+        }
+    }
+}
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    error_log("Login attempt: username=$username, password=$password");
+
+    if ($username === $valid_username && $password === $valid_password) {
+        $_SESSION['loggedin'] = true;
+        $_SESSION['username'] = $username;
+        error_log("Login successful for username=$username");
+        header('Location: ' . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        $login_error = "Invalid credentials.";
+        error_log("Login failed for username=$username");
+    }
+}
+
+
+if (isset($_GET['logout'])) {
+    session_destroy();
+    header('Location: ' . $_SERVER['PHP_SELF']);
+    exit;
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST" && !isset($_POST['login'])) {
+    set_form_cookies($_POST);
+    $ilosc_osob = $_POST['ilosc_osob'];
+    $imie = $_POST['imie'];
+    $nazwisko = $_POST['nazwisko'];
+    $email = $_POST['email'];
+    $adres = $_POST['adres'];
+    $karta_kredytowa = $_POST['karta_kredytowa'];
+    $data_pobytu = $_POST['data_pobytu'];
+    $godzina_przyjazdu = $_POST['godzina_przyjazdu'];
+    $dostawienie_lozka = isset($_POST['dostawienie_lozka']) ? "Tak" : "Nie";
+    $udogodnienia = isset($_POST['udogodnienia']) ? implode(", ", $_POST['udogodnienia']) : "Brak";
+
+    echo "<h2>Podsumowanie Rezerwacji</h2>";
+    echo "<p>Ilość osób: $ilosc_osob</p>";
+    echo "<p><strong>Osoba rezerwująca:</strong> Imię: $imie, Nazwisko: $nazwisko, E-mail: $email</p>";
+    if ($ilosc_osob > 1) {
+        echo "<p>Podstawowe dane dla dodatkowych osób:</p>";
+        for ($i = 1; $i < $ilosc_osob; $i++) {
+            $imie_osoby = $_POST["imie"][$i];
+            $nazwisko_osoby = $_POST["nazwisko"][$i];
+            $email_osoby = $_POST["email"][$i];
+            echo "<p><strong>Osoba " . ($i + 1) . ":</strong> Imię: $imie_osoby, Nazwisko: $nazwisko_osoby, E-mail: $email_osoby</p>";
+        }
+    }
+    echo "<p>Adres: $adres</p>";
+    echo "<p>Nr karty kredytowej: $karta_kredytowa</p>";
+    echo "<p>Data pobytu: $data_pobytu</p>";
+    echo "<p>Godzina przyjazdu: $godzina_przyjazdu</p>";
+    echo "<p>Dostawienie łóżka dla dziecka: $dostawienie_lozka</p>";
+    echo "<p>Udogodnienia: $udogodnienia</p>";
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Formularz Rezerwacji Hotelowej</title>
+</head>
+<body>
+    <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin']): ?>
+        <h2>Formularz Rezerwacji Hotelowej</h2>
+        <p>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></p>
+        <a href="?logout">Logout</a>
+        <form method="POST" action="" oninput="saveFormData()">
+            <label for="ilosc_osob">Ilość osób:</label>
+            <select id="ilosc_osob" name="ilosc_osob" required>
+                <option value="1">1 osoba</option>
+                <option value="2">2 osoby</option>
+                <option value="3">3 osoby</option>
+                <option value="4">4 osoby</option>
+            </select><br><br>
+
+            <fieldset>
+                <legend>Dane osoby rezerwującej</legend>
+                <label for="imie">Imię:</label>
+                <input type="text" id="imie" name="imie" required><br>
+
+                <label for="nazwisko">Nazwisko:</label>
+                <input type="text" id="nazwisko" name="nazwisko" required><br>
+
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required><br>
+            </fieldset>
+
+            <div id="dodatkowe_osoby">
+               
+            </div>
+
+            <label for="adres">Adres:</label>
+            <input type="text" id="adres" name="adres" required><br><br>
+
+            <label for="karta_kredytowa">Nr karty kredytowej:</label>
+            <input type="text" id="karta_kredytowa" name="karta_kredytowa" pattern="[0-9]{16}" required><br><br>
+
+            <label for="data_pobytu">Data pobytu:</label>
+            <input type="date" id="data_pobytu" name="data_pobytu" required><br><br>
+
+            <label for="godzina_przyjazdu">Godzina przyjazdu:</label>
+            <input type="time" id="godzina_przyjazdu" name="godzina_przyjazdu" required><br><br>
+
+            <label for="dostawienie_lozka">Dostawienie łóżka dla dziecka:</label>
+            <input type="checkbox" id="dostawienie_lozka" name="dostawienie_lozka"><br><br>
+
+            <label for="udogodnienia">Udogodnienia:</label><br>
+            <input type="checkbox" id="klimatyzacja" name="udogodnienia[]" value="klimatyzacja">
+            <label for="klimatyzacja">Klimatyzacja</label><br>
+            <input type="checkbox" id="popielniczka" name="udogodnienia[]" value="popielniczka">
+            <label for="popielniczka">Popielniczka dla palacza</label><br><br>
+
+            <input type="button" value="Wyczyść formularz" onclick="clearFormCookies()">
+            <input type="submit" value="Zarezerwuj">
+        </form>
+    <?php else: ?>
+        <h2>Login</h2>
+        <form method="POST" action="">
+            <label for="username">nazwa:</label>
+            <input type="text" id="username" name="username" required><br>
+
+            <label for="password">Haslo:</label>
+            <input type="password" id="password" name="password" required><br>
+
+            <input type="submit" name="login" value="Login">
+        </form>
+        <?php if (isset($login_error)): ?>
+            <p style="color: red;"><?php echo $login_error; ?></p>
+        <?php endif; ?>
+        <p>Musisz się zalogowac</p>
+    <?php endif; ?>
+</body>
+</html>
